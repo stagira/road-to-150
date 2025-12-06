@@ -48,8 +48,15 @@ def close_all_positions():
     """
     try:
         print("🧹 Nettoyage du portefeuille en cours...")
-        api.close_all_positions(cancel_orders=True)
-        print("✅ Tous les ordres ouverts sont annulés et les positions fermées.")
+        
+        # 1. D'abord, on annule tous les ordres en attente (Limit, Stop...)
+        api.cancel_all_orders()
+        print("   ✅ Ordres en attente annulés.")
+
+        # 2. Ensuite, on ferme toutes les positions détenues
+        api.close_all_positions()
+        print("   ✅ Positions fermées (Ordres de vente au marché envoyés).")
+        
     except Exception as e:
         print(f"❌ Erreur lors du nettoyage : {e}")
 
@@ -60,7 +67,7 @@ def get_positions():
         if not positions:
             print("📭 Portefeuille vide.")
         else:
-            print(f"📋 POSITIONS ACTUELLES :")
+            print("📋 POSITIONS ACTUELLES :")
             for p in positions:
                 print(f"   🔹 {p.symbol} : {p.qty} actions (Valeur: {p.market_value}$)")
     except Exception as e:
